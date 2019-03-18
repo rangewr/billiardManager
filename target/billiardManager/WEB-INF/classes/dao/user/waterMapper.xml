@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.user.waterMapper">
+	<!-- 查询酒水信息 -->
+	<select id="getWater" resultType="salwater" parameterType="salwater">
+		select * from salwater where taihao=#{taihao}
+	</select>
+	<!-- 结账后删除该球台的酒水消费信息 -->
+	<delete id="deleteinfo" parameterType="salwater">
+		delete from salwater where taihao=#{taihao}
+	</delete>
+	<!-- 酒水消费计入台费 -->
+	<insert id="taifei" parameterType="salwater">
+		insert into salwater(price,man,seltime,taihao) values(#{price},#{man},now(),#{taihao})
+	</insert>
+</mapper>

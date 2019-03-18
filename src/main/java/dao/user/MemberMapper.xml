@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.user.MemberMapper">
+	<!-- 获取会员信息 -->
+	<select id="getMemInfo" resultType="Member" parameterType="Member">
+		select * from member where memid=#{memid}
+	</select>
+	<!-- 刷卡后扣除会员余额 -->
+	<update id="gaiYue" parameterType="Member">
+		update member set
+		yue=yue-#{yue} where memid=#{memid}
+	</update>
+
+	<!-- 获取信息总数量 -->
+	<select id="getPageCount" resultType="int">
+		select count(*) from member
+	</select>
+	<!-- 获取会员信息 -->
+	<select id="chaVIPServlet" resultType="Member" parameterType="pageModel">
+	<!-- select * from (select member.*,Row_number() over (order by memid asc)
+    tt from member ) where tt>(#{pageNo}-1)*#{pageSize} and
+    tt&lt;=#{pageNo}*#{pageSize}-->
+		select * from member limit #{pageNo},#{pageSize}
+	</select>
+<!-- 会员充值 -->
+	<update id="chongZhi" parameterType="Member">
+		update member set yue=yue+#{yue} where memid=#{memid}
+	</update>
+	<!-- 删除会员 -->
+	<delete id="shanChu" parameterType="Member">
+		delete from member where memid=#{memid}
+	</delete>
+	<!-- 查询卡号是否可用 -->
+	<select id="chaKaHao" parameterType="Member" resultType="Member">
+		select * from member where memid=#{memid}
+	</select>
+	<!-- 添加会员 -->
+	<insert id="addVipServlet" parameterType="Member">
+		insert into member values(#{memid},#{mname},#{mtel},#{mrank},#{discount},#{mpsw},#{yue})
+	</insert>
+</mapper>

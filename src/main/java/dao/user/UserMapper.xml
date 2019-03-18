@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.user.UserMapper">
+	<!-- 登录验证 -->
+	<select id="getNamePwd" resultType="Manager" parameterType="Manager">
+		select * from manager where account=#{account} and
+		password=#{password}
+	</select>
+	<!-- 注册验证用户名是否可用 -->
+	<select id="selectName" resultType="Manager" parameterType="Manager">
+		select * from manager where account=#{account}
+	</select>
+	<insert id="doRegister" parameterType="Manager" >
+		insert into manager (account,password,rank,shi) values(#{account},#{password},#{rank},now())
+	</insert>
+</mapper>

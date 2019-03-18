@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.user.TurnoverMapper">
+	<!-- 刷卡记录计入营业额 -->
+	<insert id="shuaka" parameterType="turnover">
+		insert into turnover
+		values('台费',#{taihao},#{price},#{man},now())
+	</insert>
+	<!-- 外卖形式销售酒水 -->
+	<insert id="waimai" parameterType="turnover">
+		insert into turnover
+		values(#{laiyuan},null,#{price},#{man},now())
+	</insert>
+	<!-- 获取信息总数量 -->
+	<select id="getPageCount" resultType="int">
+		select count(*) from
+		turnover
+	</select>
+	<!-- 新办会员 -->
+	<insert id="addVip" parameterType="turnover">
+		insert into turnover values(#{laiyuan},#{taihao},#{price},#{man},now())
+	</insert>
+	<!-- 会员充值 -->
+	<insert id="chongVip" parameterType="turnover">
+		insert into turnover values(#{laiyuan},#{taihao},#{price},#{man},now())
+	</insert>
+	<!-- 获取营业额信息 -->
+	<select id="chaYingServlet" parameterType="pageModel"
+		resultType="turnover">
+		select * from turnover limit #{pageNo},#{pageSize}
+	</select>
+	<!-- 查询是否有台费消费 -->
+	<select id="YNtaifei" resultType="int">
+		select count(*) from turnover
+		where laiyuan='台费' and
+		TO_DAYS(shi)=TO_DAYS(now())
+	</select>
+	<!-- 查询是否有新办会员 -->
+	<select id="YNnewvip" resultType="int">
+		select count(*) from turnover
+		where laiyuan='新办会员' and
+		TO_DAYS(shi)=TO_DAYS(now())
+	</select>
+	<!-- 查询是否有会员充值 -->
+	<select id="YNvipChong" resultType="int">
+		select count(*) from turnover
+		where laiyuan='会员充值' and
+		TO_DAYS(shi)=TO_DAYS(now())
+	</select>
+	<!-- 查询是否有酒水消费 -->
+	<select id="YNjiushui" resultType="int">
+		select count(*) from turnover
+		where laiyuan='外卖' and
+		TO_DAYS(shi)=TO_DAYS(now())
+	</select>
+	
+	
+	<!-- 结账打烊信息查询台费 -->
+	<select id="taiFei" resultType="double">
+		select sum(price) from turnover	where laiyuan='台费' and TO_DAYS(shi)=TO_DAYS(now())
+	</select>
+	
+	<!-- 查询新办会员收入 -->
+	<select id="newVip" resultType="double">
+		select sum(price) from turnover	where laiyuan='新办会员' and	TO_DAYS(shi)=TO_DAYS(now())
+	</select>
+	
+	<!-- 查询会员充值收入 -->
+	<select id="vipChong" resultType="double">
+		select sum(price) from turnover	where laiyuan='会员充值' and TO_DAYS(shi)=TO_DAYS(now())
+	</select>
+	
+	<!-- 查询酒水外卖收入 -->
+	<select id="jiushui" resultType="double">
+		select sum(price) from turnover	where laiyuan='外卖' and TO_DAYS(shi)=TO_DAYS(now())
+	</select>
+</mapper>

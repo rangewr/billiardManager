@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<context:component-scan base-package="controller" />
+
+	<!-- 解决json中文乱码以及日期格式 -->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+			<bean
+				class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json</value>
+					</list>
+				</property>
+				<property name="features">
+					<list>
+						<!-- Date的日期转换器 -->
+						<value>WriteDateUseDateFormat</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<mvc:resources location="/statics/" mapping="/statics/**"></mvc:resources>
+	<!--
+	 	ContentNegotiatingViewResolver 中的 favorParameter、ignoreAcceptHeader、mediaTypes等在4.1版时即为即将删除
+	 	在4.3版本中已无这些属性,这些属性已移至 ContentNegotiationManagerFactoryBean 这个类中
+	 	但是viewResolvers属性仍然在ContentNegotiatingViewResolver中
+	 	此处配置解析器有两部分:config1 & config2
+	 -->
+	<!-- 配置多视图解析器：允许同样的内容数据呈现不同的view -->
+	<!-- config1 -->
+	<bean
+		class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+		<!-- 用于开启 /userinfo/123?format=json 的支持 -->
+		<property name="favorParameter" value="true" />
+		<!-- 在没有扩展名时即: "/user/1" 时的默认展现形式 -->
+		<property name="defaultContentType" value="text/html" />
+		<!-- 扩展名至mimeType的映射,即 /user.json => application/json -->
+		<!-- spring3.1的配置模式 -->
+		<property name="mediaTypes">
+			<map>
+				<entry key="html" value="text/html;charset=UTF-8" />
+				<entry key="json" value="application/json;charset=UTF-8" />
+				<entry key="xml" value="application/xml;charset=UTF-8" />
+			</map>
+		</property>
+	</bean>
+	<!-- config2 -->
+	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="viewResolvers">
+			<list>
+				<bean
+						class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<!-- <property name="prefix" value="/WEB-INF/jsp/"/> -->
+					<property name="suffix" value=".jsp" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+
+
+	<!-- 配置MultipartResolver，用于上传文件，使用spring的CommonsMultipartResolver -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="5000000" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+</beans>   

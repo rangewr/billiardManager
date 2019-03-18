@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.user.tableMapper">
+	<!-- 获取已开的球台信息 -->
+	<select id="getOpen" resultType="ballinfo">
+		select * from
+		ballinfo where state='Y'
+	</select>
+	<!-- 获取开台时间 -->
+	<select id="getInit" resultType="double" parameterType="ballinfo">
+		select
+		now()-otime from ballinfo where tableid=#{tableid}
+	</select>
+	<!-- 开台操作 -->
+	<update id="doOpen" parameterType="ballinfo">
+		update ballinfo set
+		state='Y',otime=now() where tableid=#{tableid}
+	</update>
+	<!-- 查询开台时间 -->
+	<select id="openTime" resultType="ballinfo" parameterType="ballinfo">
+		select otime from ballinfo where tableid=#{tableid}
+	</select>
+	<!-- 查询已用时间 -->
+	<select id="usedTime" resultType="double" parameterType="ballinfo">
+		select
+		now()-otime from ballinfo where tableid=#{tableid}
+	</select>
+	<!-- 对球台信息初始化 -->
+	<update id="doCloseT" parameterType="ballinfo">
+		update ballinfo set state='N',otime=null,ctime=null where tableid=#{tableid}
+	</update>
+</mapper>
